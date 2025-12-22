@@ -9,6 +9,12 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  AWS_ACCOUNT_ID: 635014547592
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: my-ecr-pipeline
+  IMAGE_TAG: latest
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,12 +34,14 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t my-ecr-pipeline .
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
 
       - name: Tag Docker image
         run: |
-          docker tag my-ecr-pipeline:latest 635014547592.dkr.ecr.ap-northeast-2.amazonaws.com/my-ecr-pipeline:latest
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Push Docker image
         run: |
-          docker push 635014547592.dkr.ecr.ap-northeast-2.amazonaws.com/my-e
+          docker push \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
