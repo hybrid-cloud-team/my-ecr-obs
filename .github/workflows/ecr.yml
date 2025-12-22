@@ -1,0 +1,39 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::635014547592:role/GitHubActions-ECR-Role
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-ecr-pipeline .
+
+      - name: Tag Docker image
+        run: |
+          docker tag my-ecr-pipeline:latest 635014547592.dkr.ecr.ap-northeast-2.amazonaws.com/my-ecr-pipeline:latest
+
+      - name: Push Docker image
+        run: |
+          docker push 635014547592.dkr.ecr.ap-northeast-2.amazonaws.com/my-e
