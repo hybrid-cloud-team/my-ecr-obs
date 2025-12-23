@@ -1,29 +1,21 @@
-replicas: 1
-
-minimumMasterNodes: 1
-
-clusterName: logging-elasticsearch
-nodeGroup: master
-
-roles:
-  master: true
-  data: true
-  ingest: true
-
-esConfig:
-  elasticsearch.yml: |
-    cluster.name: logging-elasticsearch
-    network.host: 0.0.0.0
-    discovery.type: single-node
-    xpack.security.enabled: false
-
-resources:
-  requests:
-    cpu: "500m"
-    memory: "1Gi"
-  limits:
-    cpu: "1"
-    memory: "2Gi"
+nodeSets:
+  - name: master
+    count: 1
+    config:
+      cluster.name: logging-elasticsearch
+      discovery.type: single-node
+      xpack.security.enabled: false
+    podTemplate:
+      spec:
+        containers:
+          - name: elasticsearch
+            resources:
+              requests:
+                cpu: "500m"
+                memory: "1Gi"
+              limits:
+                cpu: "1"
+                memory: "2Gi"
 
 service:
   type: ClusterIP
