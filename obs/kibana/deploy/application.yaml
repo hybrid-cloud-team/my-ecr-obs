@@ -9,18 +9,16 @@ spec:
   source:
     repoURL: https://helm.elastic.co
     chart: kibana
-    targetRevision: 7.17.3
+    targetRevision: 8.11.1
     helm:
       valueFiles:
-        - ../env/kibana.values.yaml
+        - values.yaml
 
   destination:
-    server: https://B256D39B86C9AE90CBE284C0B42CAC8D.gr7.ap-northeast-2.eks.amazonaws.com
-    namespace: logging
+    server: https://kubernetes.default.svc
+    namespace: monitoring
 
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
