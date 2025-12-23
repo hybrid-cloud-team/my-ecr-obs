@@ -6,6 +6,7 @@ on:
     paths:
       - "obs/fluentd/image/**"
       - ".github/workflows/fluentd-ecr.yml"
+  workflow_dispatch:
 
 permissions:
   id-token: write
