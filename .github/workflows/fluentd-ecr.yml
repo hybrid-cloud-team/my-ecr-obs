@@ -1,47 +1,52 @@
-name: Build and Push to ECR
+name: Build & Push Fluentd to ECR
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+    paths:
+      - "obs/fluentd/image/**"
+      - ".github/workflows/fluentd-ecr.yml"
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  AWS_ACCOUNT_ID: 635014547592
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: my-ecr-obs
+  ECR_REPOSITORY: fluentd
   IMAGE_TAG: latest
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::635014547592:role/GitHubActions-ECR-obs-Role
-          aws-region: ap-northeast-2
+          role-to-assume: arn:aws:iam::635014547592:role/github-actions-ecr-role
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker build \
+            -t $ECR_REPOSITORY:$IMAGE_TAG \
+            -f obs/fluentd/image/Dockerfile \
+            obs/fluentd/image
 
       - name: Tag Docker image
         run: |
           docker tag $ECR_REPOSITORY:$IMAGE_TAG \
-            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+            ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Push Docker image
         run: |
           docker push \
-            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+            ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
