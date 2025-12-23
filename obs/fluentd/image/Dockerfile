@@ -4,23 +4,35 @@
 FROM fluent/fluentd:v1.16-1
 
 USER root
-
 WORKDIR /fluentd
 
+# -------------------------------
+# Build dependencies
+# -------------------------------
 RUN apk add --no-cache \
     build-base \
     ruby-dev \
     curl \
     tzdata \
+    libffi-dev \
+    openssl-dev \
+    yaml-dev \
  && rm -rf /var/cache/apk/*
 
-RUN gem install \
-    fluent-plugin-elasticsearch:5.3.0 \
-    fluent-plugin-kubernetes_metadata_filter:3.2.0 \
-    fluent-plugin-record-reformer:1.3.0 \
-    fluent-plugin-prometheus:2.0.2 \
-    fluent-plugin-s3:1.7.0 \
-    --no-document
+# -------------------------------
+# RubyGems / Bundler 안정화
+# -------------------------------
+RUN gem update --system \
+ && gem install bundler
+
+# -------------------------------
+# Fluentd plugins (순서 중요)
+# -------------------------------
+RUN gem install fluent-plugin-kubernetes_metadata_filter
+RUN gem install fluent-plugin-elasticsearch
+RUN gem install fluent-plugin-record-reformer
+RUN gem install fluent-plugin-prometheus
+RUN gem install fluent-plugin-s3
 
 ENV TZ=Asia/Seoul
 
