@@ -25,7 +25,7 @@ spec:
             memory: 512Mi
 
   destination:
-    server: https://kubernetes.default.svc
+    server: https://B256D39B86C9AE90CBE284C0B42CAC8D.gr7.ap-northeast-2.eks.amazonaws.com 
     namespace: monitoring
 
   syncPolicy:
