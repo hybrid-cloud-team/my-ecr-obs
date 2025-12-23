@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://helm.elastic.co
     chart: kibana
-    targetRevision: 8.11.1
+    targetRevision: 8.5.1
     helm:
       valueFiles:
         - values.yaml
