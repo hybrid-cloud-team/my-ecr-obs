@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elasticsearch
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://helm.elastic.co
+    chart: elasticsearch
+    targetRevision: 7.17.3
+    helm:
+      valueFiles:
+        - ../env/elasticsearch.values.yaml
+
+  destination:
+    server: https://B256D39B86C9AE90CBE284C0B42CAC8D.gr7.ap-northeast-2.eks.amazonaws.com
+    namespace: logging
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

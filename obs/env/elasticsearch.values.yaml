@@ -1,0 +1,29 @@
+replicas: 1
+
+minimumMasterNodes: 1
+
+clusterName: elasticsearch
+nodeGroup: master
+
+roles:
+  master: true
+  data: true
+  ingest: true
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "1"
+    memory: "2Gi"
+
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi
+
+service:
+  type: ClusterIP
+  port: 9200
