@@ -1,5 +1,9 @@
-adminUser: admin
-adminPassword: "ChangeMe-StrongPassword"
+# obs/grafana/deploy/grafana.values.yaml
+
+admin:
+  existingSecret: grafana-admin
+  userKey: admin-user
+  passwordKey: admin-password
 
 service:
   type: ClusterIP
@@ -7,6 +11,7 @@ service:
 persistence:
   enabled: true
   size: 10Gi
+  # storageClassName: gp3   # 필요하면 주석 해제 (클러스터 기본 SC 없을 때)
 
 resources:
   requests:
