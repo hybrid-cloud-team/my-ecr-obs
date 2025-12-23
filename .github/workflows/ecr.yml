@@ -12,7 +12,7 @@ permissions:
 env:
   AWS_ACCOUNT_ID: 635014547592
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: my-ecr-pipeline
+  ECR_REPOSITORY: my-ecr-obs
   IMAGE_TAG: latest
 
 jobs:
