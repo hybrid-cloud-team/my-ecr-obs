@@ -11,8 +11,28 @@ spec:
     chart: grafana
     targetRevision: 7.3.7
     helm:
-      valueFiles:
-        - values.yaml
+      values: |
+        replicas: 1
+
+        adminUser: admin
+        adminPassword: "ChangeMe-StrongPassword"
+
+        service:
+          type: NodePort
+          port: 3000
+          nodePort: 30002
+
+        persistence:
+          enabled: true
+          size: 10Gi
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
 
   destination:
     server: https://kubernetes.default.svc
@@ -22,41 +42,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
----
-replicas: 1
-
-adminUser: admin
-adminPassword: "ChangeMe-StrongPassword"
-
-resources:
-  requests:
-    cpu: "100m"
-    memory: "256Mi"
-  limits:
-    cpu: "500m"
-    memory: "512Mi"
-
-service:
-  type: NodePort
-  port: 3000
-  nodePort: 30002
-
-persistence:
-  enabled: true
-  size: 10Gi
-
-grafana.ini:
-  server:
-    http_addr: 0.0.0.0
-    http_port: 3000
-    domain: localhost
-
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Prometheus
-        type: prometheus
-        access: proxy
-        url: http://prometheus-server.monitoring.svc.cluster.local
-        isDefault: true
