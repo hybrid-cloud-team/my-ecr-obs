@@ -3,6 +3,7 @@ kind: Application
 metadata:
   name: grafana
   namespace: argocd
+
 spec:
   project: default
 
@@ -26,6 +27,9 @@ spec:
           enabled: true
           size: 10Gi
           storageClassName: gp2
+
+        tolerations:
+          - operator: "Exists"
 
         resources:
           requests:
