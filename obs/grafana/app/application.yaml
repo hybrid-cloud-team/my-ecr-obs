@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/hybrid-cloud-team/my-ecr-obs-2.git
+    repoURL: https://github.com/hybrid-cloud-team/my-ecr-obs.git
     targetRevision: main
     path: obs/grafana/deploy
   destination:
