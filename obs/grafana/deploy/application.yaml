@@ -23,10 +23,8 @@ spec:
           nodePort: 30002
 
         persistence:
-          enabled: true
-          size: 10Gi
           storageClassName: gp2
-
+          
         resources:
           requests:
             cpu: 100m
