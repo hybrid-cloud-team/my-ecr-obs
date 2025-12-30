@@ -1,0 +1,9 @@
+name: Build & Push Fluentd to ECR
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "obs/fluentd/**"
+      - ".github/workflows/prometheus-ecr.yml"
+  workflow_dispatch:
