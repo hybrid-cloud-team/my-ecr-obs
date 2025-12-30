@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 57.0.3   # (버전은 팀에서 정한 거 있으면 맞추기)
+    helm:
+      values: |
+        prometheus:
+          prometheusSpec:
+            replicas: 1
+
+        grafana:
+          enabled: false   # 이미 grafana 따로 쓰니까 꺼두기
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
