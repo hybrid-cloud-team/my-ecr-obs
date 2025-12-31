@@ -5,18 +5,49 @@ metadata:
   namespace: argocd
 spec:
   project: default
+
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 57.0.3   # (버전은 팀에서 정한 거 있으면 맞추기)
+    targetRevision: 57.0.3
     helm:
+      skipCrds: true
+      parameters:
+        - name: crds.enabled
+          value: "false"
       values: |
+        grafana:
+          enabled: false
+
         prometheus:
           prometheusSpec:
             replicas: 1
+          ingress:
+            enabled: true
+            ingressClassName: alb
+            annotations:
+              kubernetes.io/ingress.class: alb
+              alb.ingress.kubernetes.io/scheme: internet-facing
+              alb.ingress.kubernetes.io/target-type: ip
+              alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+            paths:
+              - /
+            pathType: Prefix
 
-        grafana:
-          enabled: false   # 이미 grafana 따로 쓰니까 꺼두기
+        alertmanager:
+          alertmanagerSpec:
+            replicas: 1
+          ingress:
+            enabled: true
+            ingressClassName: alb
+            annotations:
+              kubernetes.io/ingress.class: alb
+              alb.ingress.kubernetes.io/scheme: internet-facing
+              alb.ingress.kubernetes.io/target-type: ip
+              alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+            paths:
+              - /
+            pathType: Prefix
 
   destination:
     server: https://kubernetes.default.svc
