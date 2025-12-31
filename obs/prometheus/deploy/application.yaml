@@ -7,79 +7,9 @@ spec:
   project: default
 
   source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 57.0.3
-    helm:
-      releaseName: kube-prometheus
-      skipCrds: true
-      parameters:
-        - name: crds.enabled
-          value: "false"
-      values: |
-        grafana:
-          enabled: false
-
-        prometheus:
-          prometheusSpec:
-            replicas: 1
-            
-            thanos:
-              objectStorageConfig:
-                name: thanos-objstore
-                key: objstore.yml
-                
-          ingress:
-            enabled: true
-            ingressClassName: alb
-            annotations:
-              kubernetes.io/ingress.class: alb
-              alb.ingress.kubernetes.io/scheme: internet-facing
-              alb.ingress.kubernetes.io/target-type: ip
-              alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-            paths:
-              - /
-            pathType: Prefix
-
-        alertmanager:
-          alertmanagerSpec:
-            replicas: 1
-          ingress:
-            enabled: true
-            ingressClassName: alb
-            annotations:
-              kubernetes.io/ingress.class: alb
-              alb.ingress.kubernetes.io/scheme: internet-facing
-              alb.ingress.kubernetes.io/target-type: ip
-              alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-            paths:
-              - /
-            pathType: Prefix
-
-        # (대체 키) 차트가 아래 키를 쓰는 경우도 있어서 같이 켜둠
-        prometheusIngress:
-          enabled: true
-          ingressClassName: alb
-          annotations:
-            kubernetes.io/ingress.class: alb
-            alb.ingress.kubernetes.io/scheme: internet-facing
-            alb.ingress.kubernetes.io/target-type: ip
-            alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-          paths:
-            - /
-          pathType: Prefix
-
-        alertmanagerIngress:
-          enabled: true
-          ingressClassName: alb
-          annotations:
-            kubernetes.io/ingress.class: alb
-            alb.ingress.kubernetes.io/scheme: internet-facing
-            alb.ingress.kubernetes.io/target-type: ip
-            alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-          paths:
-            - /
-          pathType: Prefix
+    repoURL: https://github.com/hybrid-cloud-team/my-ecr-obs.git   # ⭐ 너희 레포
+    targetRevision: main
+    path: obs/prometheus/rendered                                 # ⭐ 렌더 결과 경로
 
   destination:
     server: https://kubernetes.default.svc
