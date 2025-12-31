@@ -1245,7 +1245,7 @@ spec:
   version: v2.50.1
   externalUrl: http://kube-prometheus-kube-prome-prometheus.monitoring:9090
   paused: false
-  replicas: 1
+  replicas: 2
   shards: 1
   logLevel:  info
   logFormat:  logfmt
