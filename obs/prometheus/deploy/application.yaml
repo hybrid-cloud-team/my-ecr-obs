@@ -23,6 +23,12 @@ spec:
         prometheus:
           prometheusSpec:
             replicas: 1
+            
+            thanos:
+              objectStorageConfig:
+                name: thanos-objstore
+                key: objstore.yml
+                
           ingress:
             enabled: true
             ingressClassName: alb
