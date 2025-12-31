@@ -1,0 +1,89 @@
+# .github/workflows/render-obs.yaml
+name: Render OBS Manifests (Grafana/Prometheus/Thanos)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "obs/**"
+      - ".github/workflows/render-obs.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-obs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Add Helm repos
+        run: |
+          set -e
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+
+      - name: Ensure output dirs
+        run: |
+          mkdir -p obs/grafana/rendered
+          mkdir -p obs/prometheus/rendered
+          mkdir -p obs/thanos/rendered
+
+      # ✅ 1) Grafana -> obs/grafana/rendered/grafana.yaml
+      - name: Render Grafana
+        run: |
+          set -e
+          helm template grafana grafana/grafana \
+            -n monitoring \
+            -f obs/grafana/helm/values.yaml \
+            > obs/grafana/rendered/grafana.yaml
+
+      # ✅ 2) Prometheus -> obs/prometheus/rendered/prometheus.yaml
+      - name: Render Prometheus (kube-prometheus-stack)
+        run: |
+          set -e
+          helm template prometheus prometheus-community/kube-prometheus-stack \
+            -n monitoring \
+            -f obs/prometheus/helm/values.yaml \
+            > obs/prometheus/rendered/prometheus.yaml
+
+      # ✅ 3) Thanos -> obs/thanos/rendered/thanos.yaml
+      # ※ 너희 chart가 다르면 여기만 바꾸면 됨 (예: bitnami/thanos 등)
+      - name: Render Thanos
+        run: |
+          set -e
+          helm template thanos grafana/thanos \
+            -n monitoring \
+            -f obs/thanos/helm/values.yaml \
+            > obs/thanos/rendered/thanos.yaml
+
+      - name: Commit & Push (only if changed)
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add obs/**/rendered/*.yaml
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(obs): render grafana/prometheus/thanos manifests"
+          git push
