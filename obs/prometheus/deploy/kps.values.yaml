@@ -1,14 +1,14 @@
-# obs/prometheus/deploy/kps.values.yaml
-
-# (선택) Grafana는 이미 따로 쓰고 있으니 off
 grafana:
   enabled: false
 
 prometheus:
   prometheusSpec:
     replicas: 1
+    thanos:
+      objectStorageConfig:
+        name: thanos-objstore
+        key: objstore.yml
 
-  # ✅ Prometheus UI Ingress (ALB)
   ingress:
     enabled: true
     ingressClassName: alb
@@ -20,13 +20,10 @@ prometheus:
     paths:
       - /
     pathType: Prefix
-    # hosts: []  # 도메인 있으면 ["prometheus.example.com"]
 
 alertmanager:
   alertmanagerSpec:
     replicas: 1
-
-  # ✅ Alertmanager UI Ingress (ALB)
   ingress:
     enabled: true
     ingressClassName: alb
@@ -38,3 +35,28 @@ alertmanager:
     paths:
       - /
     pathType: Prefix
+
+# (대체 키) 차트가 아래 키를 쓰는 경우도 있어서 같이 켜둠
+prometheusIngress:
+  enabled: true
+  ingressClassName: alb
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+  paths:
+    - /
+  pathType: Prefix
+
+alertmanagerIngress:
+  enabled: true
+  ingressClassName: alb
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+  paths:
+    - /
+  pathType: Prefix
