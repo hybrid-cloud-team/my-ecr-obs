@@ -1,0 +1,10 @@
+query:
+  enabled: true
+  replicaCount: 1
+
+bucketweb:
+  enabled: true
+
+objstoreConfig:
+  existingSecret: thanos-objstore
+  existingSecretKey: objstore.yml
