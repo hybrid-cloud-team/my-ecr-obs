@@ -35,11 +35,19 @@ jobs:
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
 
+      # ✅ CRD를 차트에서 추출 (버전 고정)
+      - name: Extract CRDs from chart (pinned version)
+        run: |
+          set -e
+          mkdir -p obs/prometheus/crds
+          helm show crds prometheus-community/kube-prometheus-stack \
+            --version 57.0.3 \
+            > obs/prometheus/crds/kube-prometheus-stack-crds.yaml
+
       - name: Render kube-prometheus-stack (pinned version)
         run: |
           set -e
           mkdir -p obs/prometheus/rendered
-
           helm template kube-prometheus prometheus-community/kube-prometheus-stack \
             --version 57.0.3 \
             -n monitoring \
@@ -54,12 +62,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add obs/prometheus/rendered/prometheus.yaml
+          git add obs/prometheus/rendered/prometheus.yaml obs/prometheus/crds/kube-prometheus-stack-crds.yaml
 
           if git diff --cached --quiet; then
             echo "No changes"
             exit 0
           fi
 
-          git commit -m "chore(obs): render prometheus manifest"
+          git commit -m "chore(obs): render prometheus manifests + crds"
           git push
