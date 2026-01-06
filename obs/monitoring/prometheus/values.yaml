@@ -1,1 +1,10 @@
-
+prometheus:
+  prometheusSpec:
+    externalLabels:
+      cluster: "eks-cluster" # Thanos가 구분할 클러스터 이름
+    # Thanos Sidecar 설정
+    thanos:
+      image: quay.io/thanos/thanos:v0.31.0
+      version: v0.31.0
+    # 데이터 보존 기간 (Thanos가 가져가므로 짧게 설정 가능)
+    retention: 2d
