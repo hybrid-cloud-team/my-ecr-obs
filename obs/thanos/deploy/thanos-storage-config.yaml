@@ -1,6 +1,5 @@
 type: S3
 config:
-  bucket: "thanos-storage-cluster-01"
+  bucket: "thanos-storage-cluster-01"  # 사용자님의 버킷 이름
   endpoint: "s3.us-east-1.amazonaws.com"
   region: "us-east-1"
-  insecure: false
