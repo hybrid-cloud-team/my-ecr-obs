@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-query
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-query
+  template:
+    metadata:
+      labels:
+        app: thanos-query
+    spec:
+      # 이 SA에 'arn:aws:iam::635014547592:role/ThanosS3Policy' 주석이 있어야 함
+      serviceAccountName: thanos-query-sa 
+      containers:
+        - name: thanos
+          image: quay.io/thanos/thanos:v0.37.2
+          args:
+            - query
+            - --http-address=0.0.0.0:9090
+            - --grpc-address=0.0.0.0:10901
+            - --store=prometheus-operated:10901 # Prometheus Sidecar와 연결
+            - --objstore.config-file=/etc/thanos/objstore.yml # S3 설정 연결
+          volumeMounts:
+            - name: objstore-config
+              mountPath: /etc/thanos
+              readOnly: true
+      volumes:
+        - name: objstore-config
+          secret:
+            secretName: thanos-objstore-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query
+  namespace: monitoring
+spec:
+  selector:
+    app: thanos-query
+  ports:
+    - name: http
+      port: 9090
+    - name: grpc
+      port: 10901
+---
+# 사라졌던 Ingress를 여기에 명시적으로 추가
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: thanos-query-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: thanos-query
+                port:
+                  number: 9090
