@@ -1,17 +1,18 @@
+# victoria-metrics-new.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: victoria-metrics
+  name: vm-server-test  # 이름을 아예 바꿉니다.
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: victoria-metrics
+      app: vm-server-test
   template:
     metadata:
       labels:
-        app: victoria-metrics
+        app: vm-server-test
     spec:
       containers:
       - name: vm-storage
@@ -19,7 +20,7 @@ spec:
         ports:
         - containerPort: 8428
         volumeMounts:
-        - name: data
+        - name: storage-temp
           mountPath: /storage
       - name: vmbackup
         image: victoriametrics/vmbackup:v1.101.0
@@ -29,20 +30,20 @@ spec:
         - -aws.region=us-east-1
         - -snapshot.createInterval=1h
         volumeMounts:
-        - name: data
+        - name: storage-temp
           mountPath: /storage
       volumes:
-      - name: data
-        emptyDir: {} # PVC 대신 이걸 써야 무조건 뜹니다!
+      - name: storage-temp
+        emptyDir: {}  # 디스크 없이 무조건 띄우기
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: victoria-metrics
+  name: victoria-metrics  # Prometheus가 찾는 이름은 그대로 유지
   namespace: default
 spec:
   ports:
   - port: 8428
     targetPort: 8428
   selector:
-    app: victoria-metrics
+    app: vm-server-test
