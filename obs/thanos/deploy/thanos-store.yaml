@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-store
+  namespace: monitoring
+spec:
+  serviceName: thanos-store
+  replicas: 1
+  template:
+    spec:
+      serviceAccountName: thanos-query-sa # 아까 만든 ARN 연결된 SA 사용
+      containers:
+        - name: thanos-store
+          image: quay.io/thanos/thanos:v0.37.2
+          args:
+            - store
+            - --objstore.config-file=/etc/thanos/objstore.yml
+            - --data-dir=/var/thanos/store
+          volumeMounts:
+            - name: objstore-config
+              mountPath: /etc/thanos
+      volumes:
+        - name: objstore-config
+          secret:
+            secretName: thanos-objstore-config
