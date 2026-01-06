@@ -1,1 +1,16 @@
+name: Deploy Grafana
 
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'obs/monitoring/grafana/**' # 오직 grafana 폴더가 바뀔 때만 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # (기본 체크아웃 및 AWS 인증 단계는 동일)
+      - name: Apply Grafana Only
+        run: |
+          kubectl apply -f obs/monitoring/grafana/application.yaml
