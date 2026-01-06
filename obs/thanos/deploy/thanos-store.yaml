@@ -6,9 +6,15 @@ metadata:
 spec:
   serviceName: thanos-store
   replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-store  # 1. 이 셀렉터와
   template:
+    metadata:
+      labels:
+        app: thanos-store  # 2. 이 라벨이 반드시 같아야 에러가 안 납니다
     spec:
-      serviceAccountName: thanos-query-sa # 아까 만든 ARN 연결된 SA 사용
+      serviceAccountName: thanos-query-sa # IAM Role(ARN) 연결
       containers:
         - name: thanos-store
           image: quay.io/thanos/thanos:v0.37.2
@@ -16,6 +22,9 @@ spec:
             - store
             - --objstore.config-file=/etc/thanos/objstore.yml
             - --data-dir=/var/thanos/store
+          ports:
+            - name: grpc
+              containerPort: 10901
           volumeMounts:
             - name: objstore-config
               mountPath: /etc/thanos
