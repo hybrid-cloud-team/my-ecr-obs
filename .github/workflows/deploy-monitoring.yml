@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'obs/monitoring/**' # 이 경로 아래 파일이 바뀔 때만 작동
+      - 'obs/monitoring/**'
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 # 이미지 1번의 리전 정보와 일치시킴
+          aws-region: us-east-1
 
       - name: Set Kubernetes Context
         uses: azure/k8s-set-context@v3
@@ -28,7 +28,6 @@ jobs:
 
       - name: Apply ArgoCD Applications
         run: |
-          # 각 서비스 폴더에 있는 application.yaml을 실행하여 ArgoCD에 등록
           kubectl apply -f obs/monitoring/prometheus/application.yaml
           kubectl apply -f obs/monitoring/grafana/application.yaml
           kubectl apply -f obs/monitoring/thanos/application.yaml
