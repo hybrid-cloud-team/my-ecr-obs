@@ -1272,6 +1272,8 @@ spec:
       release: "kube-prometheus"
 
   probeNamespaceSelector: {}
+  remoteWrite:
+    - url: http://victoria-metrics.default.svc.cluster.local:8428/api/v1/write
   securityContext:
     fsGroup: 2000
     runAsGroup: 2000
