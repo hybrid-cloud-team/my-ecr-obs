@@ -2,9 +2,10 @@ name: Deploy Prometheus
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
     paths:
-      - 'obs/monitoring/prometheus/**' # Prometheus 폴더 변경시에만 작동
+      - 'obs/monitoring/prometheus/**'
 
 jobs:
   deploy:
