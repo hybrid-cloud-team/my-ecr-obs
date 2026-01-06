@@ -5,6 +5,8 @@ grafana:
 
 prometheus:
   prometheusSpec:
+    remoteWrite:
+      - url: "http://victoria-metrics.default.svc.cluster.local:8428/api/v1/write"
     replicas: 2
     thanos:
       objectStorageConfig:
