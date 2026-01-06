@@ -1,0 +1,6 @@
+type: S3
+config:
+  bucket: "thanos-storage-cluster-01"
+  endpoint: "s3.us-east-1.amazonaws.com"
+  region: "us-east-1"
+  insecure: false
