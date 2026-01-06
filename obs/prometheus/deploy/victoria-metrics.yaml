@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: victoria-metrics
+  namespace: default
 spec:
   selector:
     matchLabels:
@@ -19,12 +20,11 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /storage
-      # S3로 백업을 보내는 사이드카 일꾼
       - name: vmbackup
         image: victoriametrics/vmbackup:v1.101.0
         args:
         - -storageDataPath=/storage
-        - -dst=s3://thanos-storage-cluster-01/vm-backup
+        - -dst=s3://my-victoria-storage-01/vm-backup # <-- 새로 만든 버킷 이름
         - -aws.region=us-east-1
         - -snapshot.createInterval=1h
         volumeMounts:
@@ -32,13 +32,13 @@ spec:
           mountPath: /storage
       volumes:
       - name: data
-        persistentVolumeClaim:
-          claimName: vm-pvc # PVC가 미리 생성되어 있어야 합니다.
+        emptyDir: {} # 디스크 문제 해결을 위해 임시 저장소 사용
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: victoria-metrics
+  namespace: default
 spec:
   ports:
   - port: 8428
