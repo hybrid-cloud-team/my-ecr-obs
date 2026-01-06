@@ -3,6 +3,4 @@ config:
   bucket: "thanos-storage-cluster-01"
   endpoint: "s3.us-east-1.amazonaws.com"
   region: "us-east-1"
-  access_key: "REPLACE_ME"
-  secret_key: "REPLACE_ME"
   insecure: false
