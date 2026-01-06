@@ -4,6 +4,7 @@ metadata:
   name: victoria-metrics
   namespace: default
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: victoria-metrics
@@ -24,7 +25,7 @@ spec:
         image: victoriametrics/vmbackup:v1.101.0
         args:
         - -storageDataPath=/storage
-        - -dst=s3://my-victoria-storage-01/vm-backup # <-- 새로 만든 버킷 이름
+        - -dst=s3://my-victoria-storage-01/vm-backup
         - -aws.region=us-east-1
         - -snapshot.createInterval=1h
         volumeMounts:
@@ -32,7 +33,7 @@ spec:
           mountPath: /storage
       volumes:
       - name: data
-        emptyDir: {} # 디스크 문제 해결을 위해 임시 저장소 사용
+        emptyDir: {} # PVC 대신 이걸 써야 무조건 뜹니다!
 ---
 apiVersion: v1
 kind: Service
