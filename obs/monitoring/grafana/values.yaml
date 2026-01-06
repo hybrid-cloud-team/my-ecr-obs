@@ -1,1 +1,9 @@
-
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Thanos
+        type: prometheus
+        url: http://thanos-query:9090 # Thanos Query 서비스 주소
+        access: proxy
+        isDefault: true
