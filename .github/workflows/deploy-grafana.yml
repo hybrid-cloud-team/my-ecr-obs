@@ -2,9 +2,10 @@ name: Deploy Grafana
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
     paths:
-      - 'obs/monitoring/grafana/**' # Grafana 폴더 변경시에만 작동
+      - 'obs/monitoring/grafana/**'
 
 jobs:
   deploy:
