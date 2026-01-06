@@ -4,13 +4,28 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'obs/monitoring/grafana/**' # 오직 grafana 폴더가 바뀔 때만 실행
+      - 'obs/monitoring/grafana/**' # Grafana 폴더 변경시에만 작동
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # (기본 체크아웃 및 AWS 인증 단계는 동일)
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set Kubernetes Context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
       - name: Apply Grafana Only
         run: |
           kubectl apply -f obs/monitoring/grafana/application.yaml
