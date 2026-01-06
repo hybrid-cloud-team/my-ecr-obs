@@ -23,6 +23,7 @@ spec:
             - --http-address=0.0.0.0:9090
             - --grpc-address=0.0.0.0:10901
             - --store=prometheus-operated.monitoring.svc.cluster.local:10901
+            - --store=thanos-store.monitoring.svc.cluster.local:10901
             - --objstore.config-file=/etc/thanos/objstore.yml # S3 설정 연결
           volumeMounts:
             - name: objstore-config
