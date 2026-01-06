@@ -8,27 +8,34 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: thanos-store  # 1. 이 셀렉터와
+      app: thanos-store
   template:
     metadata:
       labels:
-        app: thanos-store  # 2. 이 라벨이 반드시 같아야 에러가 안 납니다
+        app: thanos-store
     spec:
-      serviceAccountName: thanos-query-sa # IAM Role(ARN) 연결
+      serviceAccountName: thanos-query-sa
       containers:
         - name: thanos-store
           image: quay.io/thanos/thanos:v0.37.2
           args:
             - store
             - --objstore.config-file=/etc/thanos/objstore.yml
-            - --data-dir=/var/thanos/store
+            - --data-dir=/var/thanos/store  # 이 경로를 아래 volumeMounts와 맞춥니다.
           ports:
             - name: grpc
               containerPort: 10901
           volumeMounts:
             - name: objstore-config
               mountPath: /etc/thanos
+              readOnly: true
+            # 추가: 권한 문제가 발생한 경로에 볼륨을 연결합니다.
+            - name: data
+              mountPath: /var/thanos/store
       volumes:
         - name: objstore-config
           secret:
             secretName: thanos-objstore-config
+        # 추가: 컨테이너가 자유롭게 쓰고 지울 수 있는 임시 공간을 할당합니다.
+        - name: data
+          emptyDir: {}
