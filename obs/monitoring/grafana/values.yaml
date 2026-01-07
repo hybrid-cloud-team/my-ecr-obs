@@ -10,7 +10,7 @@ grafana:
       alb.ingress.kubernetes.io/target-type: ip  # 또는 instance
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     hosts:
-      - "*"  # 특정 도메인 없이 모든 호스트 허용
+      - "" 
     path: /
 
   # 2. 데이터소스 설정 (Thanos 연결)
