@@ -1,23 +1,26 @@
 grafana:
-  # 1. 기존에 작성하신 데이터소스 설정
+  # 1. Ingress 설정 (grafana 키 하위에 위치)
+  ingress:
+    enabled: true
+    # ingressClassName: alb  # k8s 버전에 따라 이 필드를 사용할 수도 있습니다.
+    annotations:
+      kubernetes.io/ingress.class: alb
+      # ALB 필수/권장 어노테이션 예시
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip  # 또는 instance
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    hosts:
+      - "*"  # 특정 도메인 없이 모든 호스트 허용
+    path: /
+
+  # 2. 데이터소스 설정 (Thanos 연결)
   datasources:
     datasources.yaml:
       apiVersion: 1
       datasources:
         - name: Thanos
           type: prometheus
-          url: http://thanos-query:9090 # Thanos Query 서비스 주소
+          url: http://thanos-query:9090
           access: proxy
           isDefault: true
 
-  # 2. 새로 추가하는 인그레스(로드밸런서) 설정
-  ingress:
-    enabled: true
-    ingressClassName: alb
-    annotations:
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip
-      # 여러 앱을 하나의 ALB로 묶으려면 이 이름을 Thanos 쪽과 동일하게 맞춥니다.
-      alb.ingress.kubernetes.io/group.name: "monitoring-alb-group"
-    hosts:
-      - "*"  # 특정 도메인이 없다면 "*"를 사용하세요.
