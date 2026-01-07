@@ -1,88 +1,90 @@
-kube-prometheus-stack:
-  # 1. Prometheus Operator 설정
-  prometheusOperator:
-    admissionWebhooks:
+# =========================
+# 1. Prometheus Operator 설정
+# =========================
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+    patch:
       enabled: false
-      patch:
-        enabled: false
-    tls:
-      enabled: false
+  tls:
+    enabled: false
 
-  # 2. Prometheus 본체 설정
-  prometheus:
-    ingress:
-      enabled: true
-      ingressClassName: alb
-      annotations:
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
-        # ★ 핵심: Thanos/Grafana와 동일한 그룹명을 넣어 ALB를 하나로 통합합니다.
-        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-        alb.ingress.kubernetes.io/success-codes: '200,302'
-      hosts:
-        - ""   # 모든 호스트(*) 허용
-      paths:
-        - /    # Prometheus 접속 경로
-      pathType: Prefix
-
-    prometheusSpec:
-      externalLabels:
-        cluster: "eks-cluster"
-      thanos:
-        image: quay.io/thanos/thanos:v0.31.0
-        version: v0.31.0
-      retention: 2d
-
-  # 3. Alertmanager 설정 추가
-  alertmanager:
+# =========================
+# 2. Prometheus 본체 설정
+# =========================
+prometheus:
+  ingress:
     enabled: true
-    ingress:
-      enabled: true
-      ingressClassName: alb
-      annotations:
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
-        # ★ 핵심: 동일한 그룹명을 사용하여 위 Prometheus와 같은 ALB를 공유합니다.
-        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-        alb.ingress.kubernetes.io/success-codes: '200'
-      hosts:
-        - ""
-      paths:
-        - / # Alertmanager 접속 경로 (Prometheus와 겹치지 않음)
-      pathType: Prefix
-      
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+      alb.ingress.kubernetes.io/success-codes: '200,302'
+    hosts:
+      - ""
+    paths:
+      - /
+    pathType: Prefix
 
-    alertmanagerSpec:
-      # UI 내부 링크들이 /alertmanager 경로를 기준으로 작동하게 합니다.
-      externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
-      routePrefix: /
+  prometheusSpec:
+    externalLabels:
+      cluster: "eks-cluster"
+    thanos:
+      image: quay.io/thanos/thanos:v0.31.0
+      version: v0.31.0
+    retention: 2d
 
+# =========================
+# 3. Alertmanager 설정 (핵심)
+# =========================
+alertmanager:
+  enabled: true
 
-      #-------------------------------------
-      config:
-        global:
-          resolve_timeout: 5m
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+      alb.ingress.kubernetes.io/success-codes: '200'
+    hosts:
+      - ""
+    paths:
+      - /
+    pathType: Prefix
 
-        route:
-          receiver: route53-webhook
-          group_by: ["alertname"]
-          group_wait: 10s
-          group_interval: 30s
-          repeat_interval: 1m
+  alertmanagerSpec:
+    # UI 내부 링크 기준
+    externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
+    routePrefix: /
 
-          routes:
-            - matchers:
-                - alertname=~"ONPREM_OKD_CPU_.*"
-              receiver: route53-webhook
+    # 🔴 실제 Alertmanager 동작 설정
+    config:
+      global:
+        resolve_timeout: 5m
 
-            - matchers:
-                - alertname=~"AWS_EKS_CPU_.*"
-              receiver: route53-webhook
+      route:
+        receiver: route53-webhook
+        group_by: ["alertname"]
+        group_wait: 10s
+        group_interval: 30s
+        repeat_interval: 1m
 
-        receivers:
-          - name: route53-webhook
-            webhook_configs:
-              - url: "https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod"
-                send_resolved: true
+        routes:
+          - matchers:
+              - alertname=~"ONPREM_OKD_CPU_.*"
+            receiver: route53-webhook
+
+          - matchers:
+              - alertname=~"AWS_EKS_CPU_.*"
+            receiver: route53-webhook
+
+      receivers:
+        - name: route53-webhook
+          webhook_configs:
+            - url: "https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod"
+              send_resolved: true
