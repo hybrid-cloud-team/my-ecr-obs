@@ -1,4 +1,5 @@
-grafana:  # <--- 최상위에 이 키가 추가되어야 합니다!
+grafana:
+  # 1. 기존에 작성하신 데이터소스 설정
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -8,3 +9,15 @@ grafana:  # <--- 최상위에 이 키가 추가되어야 합니다!
           url: http://thanos-query:9090 # Thanos Query 서비스 주소
           access: proxy
           isDefault: true
+
+  # 2. 새로 추가하는 인그레스(로드밸런서) 설정
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      # 여러 앱을 하나의 ALB로 묶으려면 이 이름을 Thanos 쪽과 동일하게 맞춥니다.
+      alb.ingress.kubernetes.io/group.name: "monitoring-alb-group"
+    hosts:
+      - "*"  # 특정 도메인이 없다면 "*"를 사용하세요.
