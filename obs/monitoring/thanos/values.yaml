@@ -6,7 +6,9 @@ thanos:
       - prometheus-operated.monitoring.svc.cluster.local:10901
   storegateway:
     enabled: true
-    existingObjstoreSecret: "thanos-objstore-config"
+    
+  objstoreConfig: ""
+  existingObjstoreSecret: "thanos-objstore-config"
     
     ingress:
       enabled: false 
