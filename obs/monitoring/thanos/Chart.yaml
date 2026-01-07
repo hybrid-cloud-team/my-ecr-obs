@@ -1,0 +1,10 @@
+apiVersion: v2
+name: my-thanos-wrapper
+description: Wrapper chart for Thanos
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+  - name: thanos
+    version: 15.7.4  # 사용하려는 Thanos 차트 버전 (필요시 변경 가능)
+    repository: https://charts.bitnami.com/bitnami
