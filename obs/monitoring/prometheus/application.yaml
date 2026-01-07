@@ -23,4 +23,4 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - Validate=false
-      - Replace=true  # <--- [중요] 기존 리소스 교체 옵션 추가
+      - Replace=true   # <--- [중요] 기존 리소스 교체 옵션 추가
