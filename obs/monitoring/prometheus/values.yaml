@@ -42,7 +42,6 @@ prometheus:
 
 # =========================
 # 3. Alertmanager 설정
-# =========================
 alertmanager:
   enabled: true
 
@@ -61,33 +60,32 @@ alertmanager:
       - /
     pathType: Prefix
 
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: route53-webhook
+      group_by: ["alertname"]
+      group_wait: 10s
+      group_interval: 30s
+      repeat_interval: 1m
+
+      routes:
+        - matchers:
+            - alertname=~"ONPREM_OKD_CPU_.*"
+          receiver: route53-webhook
+
+        - matchers:
+            - alertname=~"AWS_EKS_CPU_.*"
+          receiver: route53-webhook
+
+    receivers:
+      - name: route53-webhook
+        webhook_configs:
+          - url: "https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod"
+            send_resolved: true
+
   alertmanagerSpec:
     externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
     routePrefix: /
-
-    # 🔴 Alertmanager 실제 동작 설정
-    config:
-      global:
-        resolve_timeout: 5m
-
-      route:
-        receiver: route53-webhook
-        group_by: ["alertname"]
-        group_wait: 10s
-        group_interval: 30s
-        repeat_interval: 1m
-
-        routes:
-          - matchers:
-              - alertname=~"ONPREM_OKD_CPU_.*"
-            receiver: route53-webhook
-
-          - matchers:
-              - alertname=~"AWS_EKS_CPU_.*"
-            receiver: route53-webhook
-
-      receivers:
-        - name: route53-webhook
-          webhook_configs:
-            - url: "https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod"
-              send_resolved: true
