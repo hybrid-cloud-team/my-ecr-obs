@@ -1,13 +1,23 @@
-kube-prometheus-stack:  # 1. 의존성 차트 이름 (가장 상위)
-  prometheus:           # 2. 차트 내부의 프로메테우스 설정 섹션
+kube-prometheus-stack:
+  # 1. Prometheus Operator 설정 (Webhook 비활성화 - 충돌 방지용)
+  prometheusOperator:
+    admissionWebhooks:
+      enabled: false
+      patch:
+        enabled: false
+    tls:
+      enabled: false
+
+  # 2. Prometheus 본체 설정
+  prometheus:
     prometheusSpec:
       externalLabels:
         cluster: "eks-cluster" # Thanos가 구분할 클러스터 이름
       
-      # Thanos Sidecar 설정 (매우 중요: 이 부분이 있어야 Thanos Query가 데이터를 긁어갑니다)
+      # Thanos Sidecar 설정 (매우 중요: Thanos Query 연동용)
       thanos:
         image: quay.io/thanos/thanos:v0.31.0
         version: v0.31.0
       
-      # 데이터 보존 기간 (Thanos가 장기 보관하므로 로컬은 짧게 설정)
+      # 데이터 보존 기간 (Thanos가 장기 보관하므로 로컬은 짧게)
       retention: 2d
