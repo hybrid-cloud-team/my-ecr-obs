@@ -4,6 +4,9 @@ thanos:
     # 여기에 아래 내용을 추가합니다
     stores:
       - prometheus-operated.monitoring.svc.cluster.local:10901
+  storegateway:
+    enabled: true
+    existingObjstoreSecret: "thanos-objstore-config"
     
     ingress:
       enabled: false 
