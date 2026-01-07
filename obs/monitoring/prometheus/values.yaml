@@ -29,8 +29,8 @@ prometheus:
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
       alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
       alb.ingress.kubernetes.io/success-codes: '200,302'
-    hosts:
-      - ""
+    # 🔴 수정 포인트: "" 대신 아래처럼 비워두세요.
+    hosts: [] 
     paths:
       - /
     pathType: Prefix
@@ -52,7 +52,6 @@ prometheus:
 # ======================================================
 alertmanager:
   enabled: true
-
   ingress:
     enabled: true
     ingressClassName: alb
@@ -62,8 +61,8 @@ alertmanager:
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
       alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
       alb.ingress.kubernetes.io/success-codes: '200'
-    hosts:
-      - ""
+    # 🔴 수정 포인트: "" 대신 아래처럼 비워두세요.
+    hosts: []
     paths:
       - /
     pathType: Prefix
