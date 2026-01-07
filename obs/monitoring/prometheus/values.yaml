@@ -1,5 +1,5 @@
 kube-prometheus-stack:
-  # 1. Prometheus Operator 설정 (Webhook 비활성화 - 충돌 방지용)
+  # 1. Prometheus Operator 설정
   prometheusOperator:
     admissionWebhooks:
       enabled: false
@@ -10,36 +10,52 @@ kube-prometheus-stack:
 
   # 2. Prometheus 본체 설정
   prometheus:
-    # --- Ingress 설정 추가 (Prometheus UI 접속용) ---
     ingress:
       enabled: true
       ingressClassName: alb
       annotations:
-        kubernetes.io/ingress.class: alb
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
+        # ★ 핵심: Thanos/Grafana와 동일한 그룹명을 넣어 ALB를 하나로 통합합니다.
+        alb.ingress.kubernetes.io/group.name: monitoring-alb-group
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-
-        # [중요] 헬스체크 경로 수정 (이 두 줄을 꼭 추가하세요!)
-        #alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-        #alb.ingress.kubernetes.io/success-codes: '200'
-        alb.ingress.kubernetes.io/healthcheck-path: /
+        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
         alb.ingress.kubernetes.io/success-codes: '200,302'
-        
       hosts:
-        - ""   
+        - ""   # 모든 호스트(*) 허용
       paths:
-        - /    
+        - /    # Prometheus 접속 경로
+      pathType: Prefix
 
-    # --- 기존 Prometheus Spec 설정 ---
     prometheusSpec:
       externalLabels:
-        cluster: "eks-cluster" # Thanos가 구분할 클러스터 이름
-      
-      # Thanos Sidecar 설정
+        cluster: "eks-cluster"
       thanos:
         image: quay.io/thanos/thanos:v0.31.0
         version: v0.31.0
-      
-      # 데이터 보존 기간
       retention: 2d
+
+  # 3. Alertmanager 설정 추가
+  alertmanager:
+    enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        # ★ 핵심: 동일한 그룹명을 사용하여 위 Prometheus와 같은 ALB를 공유합니다.
+        alb.ingress.kubernetes.io/group.name: monitoring-alb-group
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+        alb.ingress.kubernetes.io/success-codes: '200'
+      hosts:
+        - ""
+      paths:
+        - /alertmanager # Alertmanager 접속 경로 (Prometheus와 겹치지 않음)
+      pathType: Prefix
+
+    alertmanagerSpec:
+      # UI 내부 링크들이 /alertmanager 경로를 기준으로 작동하게 합니다.
+      externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
+      routePrefix: /
