@@ -1,21 +1,24 @@
-# =========================
-# 1. Prometheus Operator 설정
-# (Admission Webhook 완전 비활성화 – 핵심)
-# =========================
+# ======================================================
+# 1. Prometheus Operator
+#   - admission webhook 완전 비활성화 (RBAC 재생성 차단)
+# ======================================================
 prometheusOperator:
   enabled: true
+
   admissionWebhooks:
     enabled: false
     patch:
       enabled: false
     certManager:
       enabled: false
+
   tls:
     enabled: false
 
-# =========================
-# 2. Prometheus 본체 설정
-# =========================
+
+# ======================================================
+# 2. Prometheus
+# ======================================================
 prometheus:
   ingress:
     enabled: true
@@ -35,13 +38,16 @@ prometheus:
   prometheusSpec:
     externalLabels:
       cluster: "eks-cluster"
+    retention: 2d
+
     thanos:
       image: quay.io/thanos/thanos:v0.31.0
       version: v0.31.0
-    retention: 2d
 
-# =========================
-# 3. Alertmanager 설정
+
+# ======================================================
+# 3. Alertmanager
+# ======================================================
 alertmanager:
   enabled: true
 
@@ -60,6 +66,7 @@ alertmanager:
       - /
     pathType: Prefix
 
+  # 🔴 Alertmanager 실제 동작 설정 (이 위치가 핵심)
   config:
     global:
       resolve_timeout: 5m
