@@ -1,25 +1,26 @@
 thanos:
   query:
     enabled: true
-    # Ingress 설정
+    # Ingress 설정 부분
     ingress:
       enabled: true
       hostname: "*"
-      ingressClassName: alb
+      ingressClassName: "alb"
       annotations:
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/scheme: "internet-facing"
+        alb.ingress.kubernetes.io/target-type: "ip"
         alb.ingress.kubernetes.io/group.name: "monitoring-alb-group"
-      # path를 설정해야 한다면 아래 주석을 해제하세요.
-      # path: /thanos
+        # 아래 설정은 에러 방지를 위해 문자열 처리를 확실히 합니다.
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      # 경로 설정을 위해 기본값 유지
+      pathType: ImplementationSpecific
 
-    # Prometheus Sidecar를 찾기 위한 설정
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
 
-  # 이미지 에러(ImagePullBackOff) 해결을 위한 설정 추가
+  # 이미지 오류 해결을 위한 설정
   image:
-    registry: quay.io
-    repository: thanos/thanos
-    tag: v0.32.5
+    registry: "quay.io"
+    repository: "thanos/thanos"
+    tag: "v0.32.5"
