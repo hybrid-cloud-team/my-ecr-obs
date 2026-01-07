@@ -21,9 +21,9 @@ kube-prometheus-stack:
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
 
         # [중요] 헬스체크 경로 수정 (이 두 줄을 꼭 추가하세요!)
-        #alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-        #alb.ingress.kubernetes.io/success-codes: '200'
-        alb.ingress.kubernetes.io/healthcheck-path: /
+        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+        alb.ingress.kubernetes.io/success-codes: '200'
+
         
       hosts:
         - ""   
