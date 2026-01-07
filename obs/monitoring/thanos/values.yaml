@@ -1,5 +1,6 @@
-query:
-  enabled: true
-  dnsDiscovery:
-    sidecarsService: "prometheus-stack-thanos-discovery"
-    sidecarsNamespace: "monitoring"
+thanos:  
+  query:
+    enabled: true
+    dnsDiscovery:
+      sidecarsService: "prometheus-stack-thanos-discovery"
+      sidecarsNamespace: "monitoring"
