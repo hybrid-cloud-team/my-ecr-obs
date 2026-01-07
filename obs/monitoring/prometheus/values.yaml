@@ -18,15 +18,8 @@ prometheusOperator:
 # ======================================================
 prometheus:
   ingress:
-    enabled: true
-    ingressClassName: alb
-    annotations:
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-      alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-      alb.ingress.kubernetes.io/success-codes: '200,302'
-    # 🔴 수정 포인트: "" 대신 아래처럼 비워두세요.
+    enabled: false 
+
     hosts: [] 
     paths:
       - /
