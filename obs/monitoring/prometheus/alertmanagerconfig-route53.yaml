@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: route53-webhook
+  namespace: monitoring
+spec:
+  route:
+    receiver: route53-webhook
+    groupBy: ["alertname"]
+    groupWait: 10s
+    groupInterval: 30s
+    repeatInterval: 1m
+    routes:
+      - matchers:
+          - name: alertname
+            matchType: "=~"
+            value: "ONPREM_OKD_CPU_.*"
+      - matchers:
+          - name: alertname
+            matchType: "=~"
+            value: "AWS_EKS_CPU_.*"
+
+  receivers:
+    - name: route53-webhook
+      webhookConfigs:
+        - url: https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod
+          sendResolved: true
