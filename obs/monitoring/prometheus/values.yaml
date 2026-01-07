@@ -10,14 +10,29 @@ kube-prometheus-stack:
 
   # 2. Prometheus 본체 설정
   prometheus:
+    # --- Ingress 설정 추가 (Prometheus UI 접속용) ---
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      annotations:
+        kubernetes.io/ingress.class: alb
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      hosts:
+        - ""   
+      paths:
+        - /    
+
+    # --- 기존 Prometheus Spec 설정 ---
     prometheusSpec:
       externalLabels:
         cluster: "eks-cluster" # Thanos가 구분할 클러스터 이름
       
-      # Thanos Sidecar 설정 (매우 중요: Thanos Query 연동용)
+      # Thanos Sidecar 설정
       thanos:
         image: quay.io/thanos/thanos:v0.31.0
         version: v0.31.0
       
-      # 데이터 보존 기간 (Thanos가 장기 보관하므로 로컬은 짧게)
+      # 데이터 보존 기간
       retention: 2d
