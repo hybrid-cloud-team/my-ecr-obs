@@ -1,19 +1,18 @@
 grafana:
-  # 1. Ingress 설정 (grafana 키 하위에 위치)
+  # 1. Ingress 설정
   ingress:
     enabled: true
-    ingressClassName: alb  # k8s 버전에 따라 이 필드를 사용할 수도 있습니다.
+    ingressClassName: alb
     annotations:
       kubernetes.io/ingress.class: alb
-      # ALB 필수/권장 어노테이션 예시
       alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip  
+      alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     hosts:
-      - "" 
+      - ""
     path: /
 
-  # 2. 데이터소스 설정 (Thanos 연결)
+  # 2. 데이터소스 설정
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -24,3 +23,9 @@ grafana:
           access: proxy
           isDefault: true
 
+
+  adminPassword: "123456"
+  
+  persistence:
+    enabled: true
+    size: 10Gi
