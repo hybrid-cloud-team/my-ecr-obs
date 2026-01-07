@@ -1,10 +1,14 @@
 # =========================
 # 1. Prometheus Operator 설정
+# (Admission Webhook 완전 비활성화 – 핵심)
 # =========================
 prometheusOperator:
+  enabled: true
   admissionWebhooks:
     enabled: false
     patch:
+      enabled: false
+    certManager:
       enabled: false
   tls:
     enabled: false
@@ -37,7 +41,7 @@ prometheus:
     retention: 2d
 
 # =========================
-# 3. Alertmanager 설정 (핵심)
+# 3. Alertmanager 설정
 # =========================
 alertmanager:
   enabled: true
@@ -58,11 +62,10 @@ alertmanager:
     pathType: Prefix
 
   alertmanagerSpec:
-    # UI 내부 링크 기준
     externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
     routePrefix: /
 
-    # 🔴 실제 Alertmanager 동작 설정
+    # 🔴 Alertmanager 실제 동작 설정
     config:
       global:
         resolve_timeout: 5m
