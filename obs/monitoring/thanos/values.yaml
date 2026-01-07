@@ -1,27 +1,25 @@
 thanos:
-  image:
-    registry: quay.io
-    repository: thanos/thanos
-    tag: v0.32.5
-
-thanos:
   query:
     enabled: true
-    # 로드밸런서(Ingress) 설정
+    # Ingress 설정
     ingress:
       enabled: true
+      hostname: "*"
       ingressClassName: alb
       annotations:
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
-        # 중요: Grafana 설정과 동일한 이름을 사용해야 합쳐집니다.
         alb.ingress.kubernetes.io/group.name: "monitoring-alb-group"
-        # 경로 기반으로 구분할 때 필요 (예: /thanos로 접속)
-        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-      hostname: "*"
-      # 만약 도메인 없이 경로로 구분하고 싶다면 아래처럼 설정 가능합니다.
-      # path: /thanos 
+      # path를 설정해야 한다면 아래 주석을 해제하세요.
+      # path: /thanos
 
+    # Prometheus Sidecar를 찾기 위한 설정
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
+
+  # 이미지 에러(ImagePullBackOff) 해결을 위한 설정 추가
+  image:
+    registry: quay.io
+    repository: thanos/thanos
+    tag: v0.32.5
