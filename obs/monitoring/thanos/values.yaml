@@ -4,7 +4,6 @@ thanos:
     ingress:
       enabled: true
       ingressClassName: "alb"
-      hostname: "thanos-query.local" 
       pathType: ImplementationSpecific
       annotations:
         alb.ingress.kubernetes.io/scheme: "internet-facing"
