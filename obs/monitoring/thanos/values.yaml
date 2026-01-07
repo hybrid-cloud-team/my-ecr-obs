@@ -5,8 +5,6 @@ thanos:
       enabled: true
       ingressClassName: "alb"
       pathType: "Prefix"
-      hostname: "" # 또는 삭제
-      # 핵심: 경로를 /thanos로 지정
       path: /thanos
       annotations:
         alb.ingress.kubernetes.io/scheme: "internet-facing"
