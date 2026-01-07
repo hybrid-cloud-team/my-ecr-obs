@@ -5,8 +5,7 @@ thanos:
       enabled: true
       ingressClassName: "alb"
       pathType: "ImplementationSpecific"
-      hosts:
-        - "" 
+      hosts: []
       annotations:
         alb.ingress.kubernetes.io/scheme: "internet-facing"
         alb.ingress.kubernetes.io/target-type: "ip"
@@ -16,6 +15,7 @@ thanos:
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
+      
   image:
     registry: "quay.io"
     repository: "thanos/thanos"
