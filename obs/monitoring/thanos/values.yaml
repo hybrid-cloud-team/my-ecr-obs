@@ -4,7 +4,6 @@ thanos:
     ingress:
       enabled: true
       ingressClassName: "alb"
-      # host 설정을 비워두어 모든 호스트(*)를 허용하도록 합니다.
       hostname: "" 
       pathType: ImplementationSpecific
       annotations:
