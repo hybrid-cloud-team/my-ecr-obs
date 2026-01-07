@@ -1,10 +1,15 @@
 thanos:
   query:
     enabled: true
-    # 차트가 만드는 이상한 Ingress 설정을 아예 포기합니다.
     ingress:
       enabled: false 
 
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
+
+  # 이 부분을 반드시 추가해야 합니다!
+  image:
+    registry: "quay.io"
+    repository: "thanos/thanos"
+    tag: "v0.32.5"
