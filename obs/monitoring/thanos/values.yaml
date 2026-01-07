@@ -14,12 +14,9 @@ thanos:
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
       # 경로 설정을 위해 기본값 유지
       pathType: ImplementationSpecific
-
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
-
-  # 이미지 오류 해결을 위한 설정
   image:
     registry: "quay.io"
     repository: "thanos/thanos"
