@@ -13,7 +13,7 @@ spec:
   rules:
     - http: # host를 적지 않으면 자동으로 * (모든 호스트)가 됩니다.
         paths:
-          - path: /
+          - path: /thanos
             pathType: Prefix
             backend:
               service:
