@@ -4,7 +4,6 @@ thanos:
     ingress:
       enabled: true
       ingressClassName: "alb"
-      hostname: "*"
       pathType: "ImplementationSpecific"
       annotations:
         alb.ingress.kubernetes.io/scheme: "internet-facing"
