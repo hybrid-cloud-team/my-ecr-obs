@@ -4,12 +4,15 @@ thanos:
     ingress:
       enabled: true
       ingressClassName: "alb"
-      hostname: null
-      pathType: "ImplementationSpecific"
+      pathType: "Prefix"
+      hostname: "" # 또는 삭제
+      # 핵심: 경로를 /thanos로 지정
+      path: /thanos
       annotations:
         alb.ingress.kubernetes.io/scheme: "internet-facing"
         alb.ingress.kubernetes.io/target-type: "ip"
         alb.ingress.kubernetes.io/group.name: "monitoring-alb-group"
+        # 중요: 경로를 재작성하거나 순서를 지정할 때 필요할 수 있음
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
 
     dnsDiscovery:
