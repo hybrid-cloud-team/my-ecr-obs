@@ -16,7 +16,6 @@ thanos:
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
-
   image:
     registry: "quay.io"
     repository: "thanos/thanos"
