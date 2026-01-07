@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: thanos-query-manual
+  namespace: monitoring
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: monitoring-alb-group
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+spec:
+  ingressClassName: alb
+  rules:
+    - http: # host를 적지 않으면 자동으로 * (모든 호스트)가 됩니다.
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: thanos-query # 서비스 이름이 맞는지 확인 필요
+                port:
+                  number: 9090
