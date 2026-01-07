@@ -1,22 +1,24 @@
 thanos:
   query:
     enabled: true
-    # Ingress 설정 부분
+    # Bitnami 차트에서는 hostname 대신 hosts 리스트를 선호하는 경우가 많습니다.
+    # 에러 방지를 위해 가장 안전한 구조로 변경합니다.
     ingress:
       enabled: true
-      hostname: "*"
       ingressClassName: "alb"
+      # hostname: "*" 대신 아래와 같이 비워두거나 명시적으로 설정합니다.
+      hostname: "thanos.example.com" 
+      pathType: ImplementationSpecific
       annotations:
         alb.ingress.kubernetes.io/scheme: "internet-facing"
         alb.ingress.kubernetes.io/target-type: "ip"
         alb.ingress.kubernetes.io/group.name: "monitoring-alb-group"
-        # 아래 설정은 에러 방지를 위해 문자열 처리를 확실히 합니다.
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-      # 경로 설정을 위해 기본값 유지
-      pathType: ImplementationSpecific
+
     dnsDiscovery:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
+
   image:
     registry: "quay.io"
     repository: "thanos/thanos"
