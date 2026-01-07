@@ -1,6 +1,5 @@
-thanos:  
-  query:
-    enabled: true
-    dnsDiscovery:
-      sidecarsService: "prometheus-stack-thanos-discovery"
-      sidecarsNamespace: "monitoring"
+thanos:
+  image:
+    registry: quay.io
+    repository: thanos/thanos
+    tag: v0.32.5
