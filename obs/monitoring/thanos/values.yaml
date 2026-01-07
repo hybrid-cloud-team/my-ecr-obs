@@ -1,6 +1,10 @@
 thanos:
   query:
     enabled: true
+    # 여기에 아래 내용을 추가합니다
+    extraArgs:
+      - --store=kube-prometheus-kube-prome-prometheus.monitoring.svc.cluster.local:10901
+    
     ingress:
       enabled: false 
 
@@ -8,7 +12,6 @@ thanos:
       sidecarsService: "prometheus-stack-thanos-discovery"
       sidecarsNamespace: "monitoring"
 
-  # 이 부분을 반드시 추가해야 합니다!
   image:
     registry: "quay.io"
     repository: "thanos/thanos"
