@@ -17,11 +17,12 @@ prometheusOperator:
 # ======================================================
 prometheus:
   ingress:
-    enabled: false 
+    enabled: false
 
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: true
     podMonitorSelectorNilUsesHelmValues: true
+
     externalLabels:
       cluster: "eks-cluster"
     retention: 2d
@@ -32,6 +33,19 @@ prometheus:
       objectStorageConfig:
         name: thanos-objstore-config
         key: objstore.yml
+
+kubelet:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    cAdvisor: true
+
+    https: true
+    insecureSkipVerify: true
+
+    resource: true
+    probes: true
+
 
 # ======================================================
 # 3. Alertmanager
