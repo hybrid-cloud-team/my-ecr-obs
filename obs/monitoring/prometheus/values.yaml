@@ -26,6 +26,7 @@ kube-prometheus-stack:
       enabled: true
       ingressClassName: alb
       annotations:
+        alb.ingress.kubernetes.io/group.name: "monitoring-alb"
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
@@ -78,6 +79,7 @@ kube-prometheus-stack:
       enabled: true
       ingressClassName: alb
       annotations:
+        alb.ingress.kubernetes.io/group.name: "monitoring-alb"
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
@@ -85,7 +87,7 @@ kube-prometheus-stack:
         alb.ingress.kubernetes.io/success-codes: '200'
       hosts: []
       paths:
-        - /
+        - /alertmanager
       pathType: Prefix
 
     config:
@@ -116,4 +118,4 @@ kube-prometheus-stack:
 
     alertmanagerSpec:
       externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
-      routePrefix: /
+      routePrefix: /alertmanager
