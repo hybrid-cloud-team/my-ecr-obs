@@ -1,0 +1,110 @@
+# --- Namespaced (monitoring) ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kube-prometheus-kube-prome-admission
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kube-prometheus-kube-prome-admission
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-prometheus-kube-prome-alertmanager
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-prometheus-kube-prome-operator
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-prometheus-kube-prome-prometheus
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-prometheus-kube-state-metrics
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-prometheus-prometheus-node-exporter
+  namespace: monitoring
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-prometheus-kube-prome-admission-create
+  namespace: monitoring
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-prometheus-kube-prome-admission-patch
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-kube-prometheus-kube-prome-alertmanager
+  namespace: monitoring
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kube-prometheus-kube-prome-admission
+  namespace: monitoring
+type: Opaque
+
+# --- Cluster-scoped ---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-prometheus-kube-prome-admission
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-prometheus-kube-prome-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-prometheus-kube-prome-prometheus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-prometheus-kube-state-metrics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-prometheus-kube-prome-admission
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-prometheus-kube-prome-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-prometheus-kube-prome-prometheus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-prometheus-kube-state-metrics
