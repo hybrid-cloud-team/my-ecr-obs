@@ -41,10 +41,6 @@ kube-prometheus-stack:
       serviceMonitorSelectorNilUsesHelmValues: true
       podMonitorSelectorNilUsesHelmValues: true
 
-      tsdb:
-        minBlockDuration: 5m
-        maxBlockDuration: 5m
-
       externalLabels:
         cluster: "eks-cluster"
       retention: 2d
