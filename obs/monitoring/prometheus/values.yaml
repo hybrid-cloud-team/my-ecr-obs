@@ -1,99 +1,105 @@
 # ======================================================
-# 1. Prometheus Operator
-#   - admission webhook 완전 비활성화 (RBAC 재생성 차단)
+# kube-prometheus-stack (dependency root)
 # ======================================================
-prometheusOperator:
-  enabled: true
-  admissionWebhooks:
-    enabled: false
-    patch:
-      enabled: false
-    certManager:
-      enabled: false
-  tls:
-    enabled: false
-# ======================================================
-# 2. Prometheus
-# ======================================================
-prometheus:
-  ingress:
-    enabled: false
+kube-prometheus-stack:
 
-  prometheusSpec:
-    serviceMonitorSelectorNilUsesHelmValues: true
-    podMonitorSelectorNilUsesHelmValues: true
-
-    externalLabels:
-      cluster: "eks-cluster"
-    retention: 2d
-
-    thanos:
-      image: quay.io/thanos/thanos:v0.31.0
-      version: v0.31.0
-      objectStorageConfig:
-        name: thanos-objstore-config
-        key: objstore.yml
-
-kubelet:
-  enabled: true
-  serviceMonitor:
+  # ======================================================
+  # 1. Prometheus Operator
+  #   - admission webhook 완전 비활성화 (RBAC 재생성 차단)
+  # ======================================================
+  prometheusOperator:
     enabled: true
-    cAdvisor: true
+    admissionWebhooks:
+      enabled: false
+      patch:
+        enabled: false
+      certManager:
+        enabled: false
+    tls:
+      enabled: false
 
-    https: true
-    insecureSkipVerify: true
+  # ======================================================
+  # 2. Prometheus
+  # ======================================================
+  prometheus:
+    ingress:
+      enabled: false
 
-    resource: true
-    probes: true
+    prometheusSpec:
+      serviceMonitorSelectorNilUsesHelmValues: true
+      podMonitorSelectorNilUsesHelmValues: true
 
+      externalLabels:
+        cluster: "eks-cluster"
+      retention: 2d
 
-# ======================================================
-# 3. Alertmanager
-# ======================================================
-alertmanager:
-  enabled: true
-  ingress:
+      thanos:
+        image: quay.io/thanos/thanos:v0.31.0
+        version: v0.31.0
+        objectStorageConfig:
+          name: thanos-objstore-config
+          key: objstore.yml
+
+  # ======================================================
+  # kubelet
+  # ======================================================
+  kubelet:
     enabled: true
-    ingressClassName: alb
-    annotations:
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-      alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-      alb.ingress.kubernetes.io/success-codes: '200'
-    # 🔴 수정 포인트: "" 대신 아래처럼 비워두세요.
-    hosts: []
-    paths:
-      - /
-    pathType: Prefix
+    serviceMonitor:
+      enabled: true
+      cAdvisor: true
 
-  # 🔴 Alertmanager 실제 동작 설정 (이 위치가 핵심)
-  config:
-    global:
-      resolve_timeout: 5m
+      https: true
+      insecureSkipVerify: true
 
-    route:
-      receiver: route53-webhook
-      group_by: ["alertname"]
-      group_wait: 10s
-      group_interval: 30s
-      repeat_interval: 1m
+      resource: true
+      probes: true
 
-      routes:
-        - matchers:
-            - alertname=~"ONPREM_OKD_CPU_.*"
-          receiver: route53-webhook
+  # ======================================================
+  # 3. Alertmanager
+  # ======================================================
+  alertmanager:
+    enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+        alb.ingress.kubernetes.io/success-codes: '200'
+      hosts: []
+      paths:
+        - /
+      pathType: Prefix
 
-        - matchers:
-            - alertname=~"AWS_EKS_CPU_.*"
-          receiver: route53-webhook
+    config:
+      global:
+        resolve_timeout: 5m
 
-    receivers:
-      - name: route53-webhook
-        webhook_configs:
-          - url: "https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod"
-            send_resolved: true
+      route:
+        receiver: route53-webhook
+        group_by: ["alertname"]
+        group_wait: 10s
+        group_interval: 30s
+        repeat_interval: 1m
 
-  alertmanagerSpec:
-    externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
-    routePrefix: /
+        routes:
+          - matchers:
+              - alertname=~"ONPREM_OKD_CPU_.*"
+            receiver: route53-webhook
+
+          - matchers:
+              - alertname=~"AWS_EKS_CPU_.*"
+            receiver: route53-webhook
+
+      receivers:
+        - name: route53-webhook
+          webhook_configs:
+            - url: "https://hk8fwhdboc.execute-api.us-east-1.amazonaws.com/prod"
+              send_resolved: true
+
+    alertmanagerSpec:
+      externalUrl: "http://k8s-monitoringalbgrou-9a6446449e-137211545.us-east-1.elb.amazonaws.com/alertmanager"
+      routePrefix: /
