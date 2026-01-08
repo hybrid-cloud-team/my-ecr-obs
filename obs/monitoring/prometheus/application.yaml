@@ -5,16 +5,19 @@ metadata:
   namespace: argocd
 spec:
   project: default
+
   source:
     repoURL: 'https://github.com/hybrid-cloud-team/my-ecr-obs.git'
     targetRevision: HEAD
-    path: obs/monitoring/prometheus # 실제 폴더 경로와 정확히 일치해야 함
+    path: obs/monitoring/prometheus
     helm:
       valueFiles:
         - values.yaml
+
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
+
   syncPolicy:
     automated:
       prune: true
@@ -23,4 +26,32 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - Validate=false
-      - Replace=true   # <--- [중요] 기존 리소스 교체 옵션 추가
+      - Replace=true
+
+  # 🔴 [핵심 추가] Helm admission hook 리소스 Argo 관리 대상에서 제외
+  ignoreDifferences:
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: prometheus-stack-kube-prom-admission
+
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+      name: prometheus-stack-kube-prom-admission
+
+    - group: rbac.authorization.k8s.io
+      kind: Role
+      name: prometheus-stack-kube-prom-admission
+      namespace: monitoring
+
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: prometheus-stack-kube-prom-admission
+      namespace: monitoring
+
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: prometheus-stack-kube-prom-admission
+
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: prometheus-stack-kube-prom-admission
