@@ -37,6 +37,7 @@ kube-prometheus-stack:
       pathType: Prefix
 
     prometheusSpec:
+      enableRemoteWriteReceiver: true
       serviceMonitorSelectorNilUsesHelmValues: true
       podMonitorSelectorNilUsesHelmValues: true
 
