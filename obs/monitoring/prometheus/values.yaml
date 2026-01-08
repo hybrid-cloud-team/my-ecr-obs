@@ -4,6 +4,7 @@
 # ======================================================
 prometheusOperator:
   enabled: true
+  
   admissionWebhooks:
     enabled: false
     patch:
