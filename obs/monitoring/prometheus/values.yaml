@@ -20,6 +20,8 @@ prometheus:
     enabled: false 
 
   prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: true
+    podMonitorSelectorNilUsesHelmValues: true
     externalLabels:
       cluster: "eks-cluster"
     retention: 2d
