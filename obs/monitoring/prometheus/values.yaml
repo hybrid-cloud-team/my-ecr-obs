@@ -23,7 +23,18 @@ kube-prometheus-stack:
   # ======================================================
   prometheus:
     ingress:
-      enabled: false
+      enabled: true
+      ingressClassName: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+        alb.ingress.kubernetes.io/success-codes: "200"
+      hosts: []
+      paths:
+        - /
+      pathType: Prefix
 
     prometheusSpec:
       serviceMonitorSelectorNilUsesHelmValues: true
@@ -40,6 +51,7 @@ kube-prometheus-stack:
           existingSecret:
             name: thanos-objstore-config
             key: objstore.yml
+
 
   # ======================================================
   # kubelet
