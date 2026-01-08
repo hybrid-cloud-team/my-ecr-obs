@@ -3,22 +3,19 @@ thanos:
     enabled: true
     stores:
       - prometheus-operated.monitoring.svc.cluster.local:10901
-    # ingress, dnsDiscovery 등은 query 하위에 있어야 합니다.
+      - thanos-storegateway.monitoring.svc.cluster.local:10901
     ingress:
-      enabled: false 
-    dnsDiscovery:
-      sidecarsService: "prometheus-stack-thanos-discovery"
-      sidecarsNamespace: "monitoring"
+      enabled: false
 
-  # storegateway는 query와 같은 레벨입니다.
+  # storegateway는 query와 같은 레벨
   storegateway:
     enabled: true
     
-  # S3 설정 (thanos 레벨에서 공통으로 사용)
+  # S3 설정 (공통)
   objstoreConfig: ""
   existingObjstoreSecret: "thanos-objstore-config"
 
-  # image 설정도 thanos 레벨에 맞춰야 합니다.
+  # image 설정
   image:
     registry: "quay.io"
     repository: "thanos/thanos"
