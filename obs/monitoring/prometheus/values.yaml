@@ -42,8 +42,10 @@ kube-prometheus-stack:
       serviceMonitorSelectorNilUsesHelmValues: true
       podMonitorSelectorNilUsesHelmValues: true
       additionalArgs:
-        - "--storage.tsdb.min-block-duration=2m"
-        - "--storage.tsdb.max-block-duration=2m"
+        - name: "storage.tsdb.min-block-duration"
+          value: "2m"
+        - name: "storage.tsdb.max-block-duration"
+          value: "2m"
 
       externalLabels:
         cluster: "eks-cluster"
