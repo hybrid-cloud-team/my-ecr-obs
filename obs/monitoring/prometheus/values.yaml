@@ -19,11 +19,6 @@ prometheus:
   ingress:
     enabled: false 
 
-    hosts: [] 
-    paths:
-      - /
-    pathType: Prefix
-
   prometheusSpec:
     externalLabels:
       cluster: "eks-cluster"
