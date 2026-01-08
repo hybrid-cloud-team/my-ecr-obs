@@ -37,8 +37,9 @@ kube-prometheus-stack:
         image: quay.io/thanos/thanos:v0.31.0
         version: v0.31.0
         objectStorageConfig:
-          name: thanos-objstore-config
-          key: objstore.yml
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml
 
   # ======================================================
   # kubelet
