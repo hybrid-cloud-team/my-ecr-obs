@@ -41,6 +41,9 @@ kube-prometheus-stack:
       enableRemoteWriteReceiver: true
       serviceMonitorSelectorNilUsesHelmValues: true
       podMonitorSelectorNilUsesHelmValues: true
+      additionalArgs:
+        - "--storage.tsdb.min-block-duration=2m"
+        - "--storage.tsdb.max-block-duration=2m"
 
       externalLabels:
         cluster: "eks-cluster"
