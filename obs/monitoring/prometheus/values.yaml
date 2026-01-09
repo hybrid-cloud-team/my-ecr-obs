@@ -53,13 +53,12 @@ kube-prometheus-stack:
         cluster: "eks-cluster"
       retention: 2d
 
-      # ✅ 5분 블록 테스트(원하면)
-      minBlockDuration: 5m
-      maxBlockDuration: 5m
-
       thanos:
         image: quay.io/thanos/thanos:v0.31.0
         version: v0.31.0
+
+        blockSize: 5m
+        
         objectStorageConfig:
           existingSecret:
             name: thanos-objstore-config
