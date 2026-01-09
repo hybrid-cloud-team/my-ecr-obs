@@ -46,9 +46,6 @@ kube-prometheus-stack:
       cluster: "eks-cluster"
     retention: 2d
 
-    minBlockDuration: 5m
-    maxBlockDuration: 5m
-
     thanos:
       image: quay.io/thanos/thanos:v0.31.0
       version: v0.31.0
