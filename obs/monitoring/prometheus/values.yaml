@@ -22,37 +22,42 @@ kube-prometheus-stack:
   # 2. Prometheus
   # ======================================================
   prometheus:
-    ingress:
-      enabled: true
-      ingressClassName: alb
-      annotations:
-        alb.ingress.kubernetes.io/group.name: "monitoring-alb"
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
-        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-        alb.ingress.kubernetes.io/success-codes: "200"
-      hosts: []
-      paths:
-        - /
-      pathType: Prefix
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/group.name: "monitoring-alb"
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+      alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+      alb.ingress.kubernetes.io/success-codes: "200"
+    hosts: []
+    paths:
+      - /
+    pathType: Prefix
 
-    prometheusSpec:
-      enableRemoteWriteReceiver: true
-      serviceMonitorSelectorNilUsesHelmValues: true
-      podMonitorSelectorNilUsesHelmValues: true
+  prometheusSpec:
+    enableRemoteWriteReceiver: true
+    serviceMonitorSelectorNilUsesHelmValues: true
+    podMonitorSelectorNilUsesHelmValues: true
 
-      externalLabels:
-        cluster: "eks-cluster"
-      retention: 2d
+    externalLabels:
+      cluster: "eks-cluster"
+    retention: 2d
 
-      thanos:
-        image: quay.io/thanos/thanos:v0.31.0
-        version: v0.31.0
-        objectStorageConfig:
-          existingSecret:
-            name: thanos-objstore-config
-            key: objstore.yml
+    # ✅ [테스트용] 5분 주기로 블록 생성/컴팩션
+    blockDuration: 5m
+    compactionInterval: 5m
+
+    thanos:
+      image: quay.io/thanos/thanos:v0.31.0
+      version: v0.31.0
+      objectStorageConfig:
+        existingSecret:
+          name: thanos-objstore-config
+          key: objstore.yml
+
 
 
   # ======================================================
