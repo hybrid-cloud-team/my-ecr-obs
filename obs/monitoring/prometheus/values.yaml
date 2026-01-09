@@ -21,38 +21,50 @@ kube-prometheus-stack:
   # ======================================================
   # 2. Prometheus
   # ======================================================
+   # ======================================================
+  # 2. Prometheus
+  # ======================================================
   prometheus:
-  ingress:
-    enabled: true
-    ingressClassName: alb
-    annotations:
-      alb.ingress.kubernetes.io/group.name: "monitoring-alb"
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-      alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
-      alb.ingress.kubernetes.io/success-codes: "200"
-    hosts: []
-    paths:
-      - /
-    pathType: Prefix
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      annotations:
+        alb.ingress.kubernetes.io/group.name: "monitoring-alb"
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+        alb.ingress.kubernetes.io/healthcheck-path: /-/healthy
+        alb.ingress.kubernetes.io/success-codes: "200"
+      hosts: []
+      paths:
+        - /
+      pathType: Prefix
 
-  prometheusSpec:
-    enableRemoteWriteReceiver: true
-    serviceMonitorSelectorNilUsesHelmValues: true
-    podMonitorSelectorNilUsesHelmValues: true
-    
-    externalLabels:
-      cluster: "eks-cluster"
-    retention: 2d
+    prometheusSpec:
+      enableRemoteWriteReceiver: true  #삭제하면안됨
 
-    thanos:
-      image: quay.io/thanos/thanos:v0.31.0
-      version: v0.31.0
-      objectStorageConfig:
-        existingSecret:
-          name: thanos-objstore-config
-          key: objstore.yml
+      # ✅ 여기 꼭 추가 (nil pointer 방지)
+      remoteWriteDashboards: false
+
+      serviceMonitorSelectorNilUsesHelmValues: true
+      podMonitorSelectorNilUsesHelmValues: true
+
+      externalLabels:
+        cluster: "eks-cluster"
+      retention: 2d
+
+      # ✅ 5분 블록 테스트(원하면)
+      minBlockDuration: 5m
+      maxBlockDuration: 5m
+
+      thanos:
+        image: quay.io/thanos/thanos:v0.31.0
+        version: v0.31.0
+        objectStorageConfig:
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml
+
 
 
 
