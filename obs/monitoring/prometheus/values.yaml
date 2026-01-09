@@ -67,7 +67,7 @@ kube-prometheus-stack:
       https: true
       insecureSkipVerify: true
 
-      resource: true
+      resource: false
       probes: true
 
   # ======================================================
