@@ -47,8 +47,8 @@ kube-prometheus-stack:
     retention: 2d
 
     # ✅ [테스트용] 5분 주기로 블록 생성/컴팩션
-    blockDuration: 5m
-    compactionInterval: 5m
+    minBlockDuration: 5m
+    maxBlockDuration: 5m
 
     thanos:
       image: quay.io/thanos/thanos:v0.31.0
