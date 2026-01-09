@@ -41,12 +41,13 @@ kube-prometheus-stack:
     enableRemoteWriteReceiver: true
     serviceMonitorSelectorNilUsesHelmValues: true
     podMonitorSelectorNilUsesHelmValues: true
+    
+    remoteWriteDashboards: false   # ✅ 추가 (nil pointer 방지)
 
     externalLabels:
       cluster: "eks-cluster"
     retention: 2d
 
-    # ✅ [테스트용] 5분 주기로 블록 생성/컴팩션
     minBlockDuration: 5m
     maxBlockDuration: 5m
 
