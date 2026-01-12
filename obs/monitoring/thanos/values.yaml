@@ -4,6 +4,7 @@ thanos:
     stores:
       - prometheus-operated.monitoring.svc.cluster.local:10901
       - thanos-storegateway.monitoring.svc.cluster.local:10901
+      - thanos-sidecar.monitoring.svc.cluster.local:10901
     ingress:
       enabled: false
 
