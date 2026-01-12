@@ -64,6 +64,12 @@ kube-prometheus-stack:
             name: thanos-objstore-config
             key: objstore.yml
 
+      additionalScrapeConfigs:
+        - job_name: 'jellyfin-manual-scrape'
+          static_configs:
+            - targets: ['jellyfin-service.jellyfin.svc.cluster.local:80']
+        # 만약 엑스포터 경로가 /metrics가 아니라면 아래 설정 추가
+          metrics_path: /metrics
 
 
 
