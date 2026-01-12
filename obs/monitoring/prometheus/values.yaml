@@ -67,7 +67,7 @@ kube-prometheus-stack:
       additionalScrapeConfigs:
         - job_name: 'jellyfin-manual-scrape'
           static_configs:
-            - targets: ['jellyfin-service.jellyfin.svc.cluster.local:80']
+            - targets: ['k8s-jellyfin-jellyfin-f86d7fa666-525024635.us-east-1.elb.amazonaws.com']
         # 만약 엑스포터 경로가 /metrics가 아니라면 아래 설정 추가
           metrics_path: /metrics
 
