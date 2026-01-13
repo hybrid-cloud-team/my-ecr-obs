@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: probe-streamer-us
+  namespace: monitoring
+spec:
+  interval: 30s
+  module: http_2xx
+  prober:
+    url: blackbox-exporter.monitoring.svc.cluster.local:9115
+  targets:
+    staticConfig:
+      labels:
+        site: "streamer"
+        region: "us-east-1"
+        cluster: "eks"
+      static:
+        - http://k8s-streamer-simplest-3955313bc5-2008440785.us-east-1.elb.amazonaws.com/
