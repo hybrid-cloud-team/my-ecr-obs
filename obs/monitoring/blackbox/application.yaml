@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<너희레포>.git
+    repoURL: https://github.com/hybrid-cloud-team/my-ecr-obs.git
     targetRevision: main
     path: obs/monitoring/blackbox
     helm: {}
