@@ -3,6 +3,8 @@ kind: Probe
 metadata:
   name: probe-streamer-us
   namespace: monitoring
+  labels:
+    release: prometheus-stack   # ✅ 이거 추가!!
 spec:
   interval: 30s
   module: http_2xx
