@@ -1,0 +1,31 @@
+name: deploy-blackbox
+
+on:
+  push:
+    paths:
+      - "obs/monitoring/blackbox/**"
+      - ".github/workflows/deploy-blackbox.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # (필요하면) kubeconfig 세팅 단계가 기존 워크플로에 있을 거야.
+      # 아래는 '예시'라서, 너희가 쓰는 방식(aws eks update-kubeconfig, kubectl config set-credentials 등)
+      # 그대로 복붙해서 쓰면 됨.
+
+      - name: Configure kubectl (example)
+        run: |
+          echo "TODO: your kubeconfig setup here"
+          kubectl version --client
+
+      - name: Apply ArgoCD Application (blackbox)
+        run: |
+          kubectl apply -f obs/monitoring/blackbox/application.yaml
+
+      # ArgoCD가 auto-sync면 여기서 끝.
+      # auto-sync가 아니면 argocd CLI로 sync 하거나 UI에서 sync.
