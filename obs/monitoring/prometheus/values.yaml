@@ -41,7 +41,7 @@ kube-prometheus-stack:
       pathType: Prefix
 
     prometheusSpec:
-      enableRemoteWriteReceiver: true  #삭제하면안됨
+      enableRemoteWriteReceiver: true  #ONPREM Data Allow
 
       # ✅ 여기 꼭 추가 (nil pointer 방지)
       remoteWriteDashboards: false
